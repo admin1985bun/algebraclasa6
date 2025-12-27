@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exerciții Adunări și Scăderi - 3 Cifre</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            font-size: 18px;
+            background-color: #f5f5dc;
+            color: #2c3e50;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #1a472a;
+            text-align: center;
+            border-bottom: 3px solid #8b4513;
+            padding-bottom: 15px;
+        }
+        
+        .exercise-container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .exercise {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #fafafa;
+            border-left: 4px solid #8b4513;
+        }
+        
+        .exercise-number {
+            font-weight: bold;
+            color: #1a472a;
+            margin-right: 15px;
+            min-width: 30px;
+        }
+        
+        .expression {
+            margin-right: 15px;
+            font-family: 'Courier New', monospace;
+            min-width: 240px;
+        }
+        
+        input[type="text"] {
+            width: 120px;
+            padding: 8px;
+            font-size: 18px;
+            border: 2px solid #8b4513;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        input.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+        
+        input.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .result {
+            margin-left: 15px;
+            font-weight: bold;
+            color: #1a472a;
+        }
+        
+        .buttons {
+            text-align: center;
+            margin-top: 25px;
+        }
+        
+        button {
+            background-color: #8b4513;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #654321;
+        }
+        
+        .score {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a472a;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Exerciții cu Numere Întregi - Trei Cifre</h1>
+    
+    <div class="exercise-container">
+        <div id="exercises"></div>
+    </div>
+    
+    <div class="buttons">
+        <button onclick="checkAnswers()">Verifică</button>
+        <button onclick="reset()">Resetare</button>
+    </div>
+    
+    <div id="score" class="score" style="display: none;"></div>
+
+    <script>
+        let exercises = [];
+        
+        function generateExercises() {
+            exercises = [];
+            const operations = ['+', '-'];
+            
+            for (let i = 0; i < 9; i++) {
+                let num1 = Math.floor(Math.random() * 1999) - 999; // -999 la 999
+                let num2 = Math.floor(Math.random() * 1999) - 999;
+                let op = operations[Math.floor(Math.random() * 2)];
+                
+                let expression;
+                let result;
+                
+                if (op === '+') {
+                    if (num2 >= 0) {
+                        expression = `${num1}+${num2}`;
+                    } else {
+                        expression = `${num1}+(${num2})`;
+                    }
+                    result = num1 + num2;
+                } else {
+                    if (num2 >= 0) {
+                        expression = `${num1}-${num2}`;
+                    } else {
+                        expression = `${num1}-(${num2})`;
+                    }
+                    result = num1 - num2;
+                }
+                
+                exercises.push({ expression, result });
+            }
+            
+            displayExercises();
+        }
+        
+        function displayExercises() {
+            const container = document.getElementById('exercises');
+            container.innerHTML = '';
+            
+            exercises.forEach((ex, index) => {
+                const div = document.createElement('div');
+                div.className = 'exercise';
+                div.innerHTML = `
+                    <span class="exercise-number">${index + 1}.</span>
+                    <span class="expression">${ex.expression} =</span>
+                    <input type="text" id="answer-${index}" />
+                    <span class="result" id="result-${index}"></span>
+                `;
+                container.appendChild(div);
+            });
+            
+            document.getElementById('score').style.display = 'none';
+        }
+        
+        function checkAnswers() {
+            let correct = 0;
+            
+            exercises.forEach((ex, index) => {
+                const input = document.getElementById(`answer-${index}`);
+                const resultSpan = document.getElementById(`result-${index}`);
+                const userAnswer = parseInt(input.value);
+                
+                if (userAnswer === ex.result) {
+                    input.className = 'correct';
+                    resultSpan.textContent = '✓ Corect';
+                    resultSpan.style.color = '#28a745';
+                    correct++;
+                } else {
+                    input.className = 'incorrect';
+                    resultSpan.textContent = `✗ Răspuns corect: ${ex.result}`;
+                    resultSpan.style.color = '#dc3545';
+                }
+            });
+            
+            const score = 1 + correct;
+            const maxScore = 1 + exercises.length;
+            document.getElementById('score').innerHTML = `Punctaj: ${score} din ${maxScore}`;
+            document.getElementById('score').style.display = 'block';
+        }
+        
+        function reset() {
+            generateExercises();
+        }
+        
+        // Generează exercițiile la încărcarea paginii
+        generateExercises();
+    </script>
+</body>
+</html>
